@@ -1,8 +1,8 @@
 class SegmentTree{
-    public:
+   
 vector<int> sgtree;
 
- 
+  public:
  
   SegmentTree(int n){
      sgtree.resize(4*n+1);
