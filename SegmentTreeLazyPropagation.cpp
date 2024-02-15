@@ -28,7 +28,7 @@ class SegTree{
    
    void update(int index,int low,int high,int l,int r,int val){
        if(lazy[index]!=0){
-           tree[index]=(high-low+1)*lazy[index];
+           tree[index]+=(high-low+1)*lazy[index];
           if(low!=high){
               lazy[2*index+1]+=lazy[index];
               lazy[2*index+2]+=lazy[index];
@@ -65,7 +65,7 @@ class SegTree{
    int query(int index,int low,int high,int l,int h){
        
         if(lazy[index]!=0){
-           tree[index]=(high-low+1)*lazy[index];
+           tree[index]+=(high-low+1)*lazy[index];
           if(low!=high){
               lazy[2*index+1]+=lazy[index];
               lazy[2*index+2]+=lazy[index];
