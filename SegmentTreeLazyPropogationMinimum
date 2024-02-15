@@ -21,7 +21,7 @@ class SegTree{
        build(2*index+1,low,mid,arr);
        build(2*index+2,mid+1,high,arr);
        
-       tree[index]=tree[2*index+1]+tree[2*index+2];
+       tree[index]=min(tree[2*index+1],tree[2*index+2]);
        
        
    }
@@ -57,7 +57,7 @@ class SegTree{
            update(2*index+1,low,mid,l,r,val);
            update(2*index+2,mid+1,high,l,r,val);
            
-           tree[index]=tree[2*index+1]+tree[2*index+2];
+           tree[index]=min(tree[2*index+1],tree[2*index+2]);
            
        }
    }
@@ -85,7 +85,7 @@ class SegTree{
      else{
          int mid=(low+high)/2;
          
-         return (query(2*index+1,low,mid,l,h)+query(2*index+2,mid+1,high,l,h));
+         return min(query(2*index+1,low,mid,l,h),query(2*index+2,mid+1,high,l,h));
      }
    }
 };
