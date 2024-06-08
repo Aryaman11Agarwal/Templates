@@ -1,0 +1,67 @@
+#include <bits/stdc++.h>
+#define ll long long
+using namespace std;
+ll vis[200010]={0},path[200010]={0};
+ll dfs(ll node, vector<ll> &v){
+    vis[node]=1;
+    path[node]=1;
+    ll start=-1;
+
+    if(v[node]!=node){
+        if(path[v[node]]==1){
+          //  vis[node]=1;
+            start=v[node];
+        }
+        else if(vis[v[node]]==0){
+        start= dfs(v[node],v);
+       vis[node]=vis[v[node]]+1;
+
+       if(node==start){
+
+           ll x=v[node];
+
+           while(x!=node){
+               vis[x]=vis[node];
+               x=v[x];
+           }
+       }
+
+      
+        }
+
+        else 
+        vis[node]=vis[v[node]]+1;
+
+    }
+     path[node]=0;
+     return start;
+    
+}
+int main() {
+  ll n;
+  cin>>n;
+
+  vector<ll> v(n);
+
+  for(auto &i:v){
+    cin>>i;
+    i--;
+  }
+//   for(auto i:v)
+//   cout<<i<<endl;
+
+//   cout<<"Arymana"<<endl;
+
+for(ll i=0;i<n;i++){
+    if(vis[i]==0)
+    dfs(i,v);
+}
+
+ll ans=0;
+for(auto i=0;i<n;i++){
+    ans+=vis[i];
+}
+
+cout<<ans<<endl;
+
+}
