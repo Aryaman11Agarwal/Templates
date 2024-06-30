@@ -1,27 +1,32 @@
 class DSU{
-public:
-    vector<int> parent;
-    vector<int> rank;
+    vector<int> size,parent;
+    public:
     DSU(int n){
-        parent.resize(n, 0);
-        rank.resize(n, 0);
-        
-        for(int i=0;i<n;i++) parent[i] = i;
+          size=vector<int>(n+1,1);
+          parent=vector<int>(n+1,0);
+
+          for(int i=0;i<=n;i++)
+          parent[i]=i;
     }
 
     int Find(int node){
-        return parent[node] = (parent[node] == node) ? node : Find(parent[node]);
+        if(node==parent[node])
+        return node;
+
+        else return parent[node]=Find(parent[node]);
     }
 
-    void Reset(int node){
-        parent[node] = node;
-    }
+    void Union(int a,int b){
+        a=Find(a);
+        b=Find(b);
 
-    void Union(int nodea, int nodeb){
-        int apar = Find(nodea), bpar = Find(nodeb);
-        if(apar != bpar){
-            rank[apar] < rank[bpar] ? parent[apar] = bpar : parent[bpar] = apar;
-            rank[apar] += rank[apar] == rank[bpar] ? 1 : 0;
-        }
+        if(a==b)
+        return ;
+
+        if(size[b]>size[a])
+        swap(a,b);
+
+        parent[b]=a;
+        size[a]+=size[b];
     }
 };
