@@ -1,5 +1,5 @@
-        int p=31;
-        int mod=1e9+7;
+        int p=53;
+        int mod=1e9+9;
         
         int n=txt.size();
         
