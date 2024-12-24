@@ -1,0 +1,34 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define ll long long
+ 
+void dfs(int node,int par,vector<vector<ll>> &adj, vector<ll> &depth){
+    
+    for(auto i:adj[node]){
+        if(i==par) continue;
+ 
+        depth[i]=depth[node]+1;
+ 
+        dfs(i,node,adj,depth);
+    }
+}
+ll getDiameter(vector<vector<ll>> &adj){
+    ll n=adj.size();
+    vector<ll> depth(n,0ll);
+ 
+    dfs(0,-1,adj,depth);
+ 
+    ll max_d=0,max_n=0;
+ 
+    for(int i=0;i<n;i++){
+        if(depth[i]>max_d){
+            max_d=depth[i];
+            max_n=i;
+        }
+        depth[i]=0;
+    }
+ 
+    dfs(max_n,-1,adj,depth);
+ 
+    return *(max_element(depth.begin(),depth.end()));
+}
