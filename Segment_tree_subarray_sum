@@ -1,0 +1,98 @@
+#define ll long long
+struct Node {
+    long long sum;        // Total sum of the segment
+    long long prefix_max; // Maximum prefix sum of the segment
+    long long suffix_max; // Maximum suffix sum of the segment
+    long long max_sum;    // Maximum subarray sum of the segment
+
+    Node()
+        : sum(0), prefix_max(LLONG_MIN), suffix_max(LLONG_MIN),
+          max_sum(LLONG_MIN) {}
+    Node(long long val)
+        : sum(val), prefix_max(val), suffix_max(val), max_sum(val) {}
+};
+
+class SegmentTree {
+private:
+    vector<Node> tree;
+    int n;
+
+    Node merge(const Node& left, const Node& right) {
+        Node result;
+        result.sum = left.sum + right.sum;
+        result.prefix_max = max(left.prefix_max, left.sum + right.prefix_max);
+        result.suffix_max = max(right.suffix_max, right.sum + left.suffix_max);
+        result.max_sum =
+            max({left.max_sum, right.max_sum,
+                 left.suffix_max + right.prefix_max, left.prefix_max,
+                 right.prefix_max, left.suffix_max, right.suffix_max});
+        return result;
+    }
+
+    void build(const vector<int>& arr, int index, int left, int right) {
+        if (left == right) {
+            tree[index] = Node(arr[left]);
+            return;
+        }
+
+        int mid = (left + right) / 2;
+        int left_child = 2 * index + 1;
+        int right_child = 2 * index + 2;
+
+        build(arr, left_child, left, mid);
+        build(arr, right_child, mid + 1, right);
+
+        tree[index] = merge(tree[left_child], tree[right_child]);
+    }
+
+    Node query(int index, int left, int right, int ql, int qr) {
+        if (ql > right || qr < left) {
+            return Node(); // Return a neutral node
+        }
+
+        if (ql <= left && qr >= right) {
+            return tree[index];
+        }
+
+        int mid = (left + right) / 2;
+        int left_child = 2 * index + 1;
+        int right_child = 2 * index + 2;
+
+        Node left_result = query(left_child, left, mid, ql, qr);
+        Node right_result = query(right_child, mid + 1, right, ql, qr);
+
+        return merge(left_result, right_result);
+    }
+
+    void update(int index, int left, int right, int pos, int value) {
+        if (left == right) {
+            tree[index] = Node(value);
+            return;
+        }
+
+        int mid = (left + right) / 2;
+        int left_child = 2 * index + 1;
+        int right_child = 2 * index + 2;
+
+        if (pos <= mid) {
+            update(left_child, left, mid, pos, value);
+        } else {
+            update(right_child, mid + 1, right, pos, value);
+        }
+
+        tree[index] = merge(tree[left_child], tree[right_child]);
+    }
+
+public:
+    SegmentTree(vector<int>& arr) {
+        n = arr.size();
+        tree.resize(4 * n);
+        build(arr, 0, 0, n - 1);
+    }
+
+    long long range_query(int ql, int qr) {
+        return query(0, 0, n - 1, ql, qr).max_sum;
+    }
+
+    void point_update(int pos, int value) { update(0, 0, n - 1, pos, value); }
+};
