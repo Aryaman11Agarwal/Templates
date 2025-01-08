@@ -12,7 +12,7 @@
         }
         
         for(int i=1;i<=n;i++){
-            hash[i]=((hash[i-1]*p)%mod + (txt[i-1]-'a'))%mod;
+            hash[i]=((hash[i-1]*p)%mod + (txt[i-1]-'a'+1))%mod;
         }
         
         
