@@ -1,0 +1,87 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define int long long
+typedef pair<int,int> pii;
+
+void fun(){
+   int n;
+   cin>>n;
+
+   unordered_map<int,vector<int>> adj;
+   vector<int> degree(n,0);
+
+   for(int i=0;i<n-1;i++){
+    int u,v;
+    cin>>u>>v;
+
+    u--;
+    v--;
+
+    degree[u]++;
+    degree[v]++;
+    adj[u].push_back(v);
+    adj[v].push_back(u);
+
+
+   }
+
+   queue<int> q;
+
+   int nodes=n;
+
+   for(int i=0;i<n;i++){
+    if(degree[i]==1) q.push(i);
+   }
+
+   while(nodes>2){
+
+    int size=q.size();
+
+    while(size--){
+        int x=q.front();
+         q.pop();
+         nodes--;
+
+        for(auto i:adj[x]){
+            degree[i]--;
+
+            if(degree[i]==1)
+            q.push(i);
+        }
+    }
+
+   
+   }
+
+   if(nodes==2){
+    /*if print both
+     
+       
+       cout<<q.front()+1<<endl;
+       q.pop();
+       cout<<q.front()+1<<endl;
+           
+     */
+    cout<<-1<<endl;
+    return;
+
+   }
+
+   else{
+    cout<<q.front()+1<<endl;
+    return ;
+   }
+}
+
+int32_t main(){
+    ios_base::sync_with_stdio(false);
+     cin.tie(nullptr);
+
+     int t=1;
+    // cin>>t;
+
+     while(t--) fun();
+    
+}
