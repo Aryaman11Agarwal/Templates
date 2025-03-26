@@ -29,4 +29,13 @@ class DSU{
         parent[b]=a;
         size[a]+=size[b];
     }
+
+    bool inSameComp(int a,int b){
+         a=Find(a);
+        b=Find(b);
+
+        if(a==b)
+        return true;
+        return false;
+    }
 };
