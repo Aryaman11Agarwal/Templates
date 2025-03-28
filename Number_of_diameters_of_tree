@@ -1,0 +1,116 @@
+int countTreeDiameters(vector<vector<int>> &adj) {
+    int n = adj.size();
+    if (n == 1) return 1; // A single node tree has one diameter (itself).
+
+    // Lambda for DFS to compute depths
+    auto dfs = [&](int node, int par, vector<int> &depth, auto &&dfs_ref) -> void {
+        for (auto i : adj[node]) {
+            if (i == par) continue;
+            depth[i] = depth[node] + 1;
+            dfs_ref(i, node, depth, dfs_ref);
+        }
+    };
+
+    // Lambda to compute tree diameter
+    auto getDiameter = [&]() -> int {
+        vector<int> depth(n, 0);
+        int leaf = 0;
+        for (int i = 0; i < n; i++) {
+            if (adj[i].size() == 1) {
+                leaf = i;
+                break;
+            }
+        }
+
+        dfs(leaf, -1, depth, dfs);
+        int max_n = max_element(depth.begin(), depth.end()) - depth.begin();
+        fill(depth.begin(), depth.end(), 0);
+        dfs(max_n, -1, depth, dfs);
+        return *max_element(depth.begin(), depth.end());
+    };
+
+    // Lambda to find tree centers
+    auto findTreeCenters = [&]() -> vector<int> {
+        vector<int> degree(n, 0);
+        queue<int> q;
+
+        for (int i = 0; i < n; i++) {
+            degree[i] = adj[i].size();
+            if (degree[i] == 1) q.push(i);
+        }
+
+        int remainingNodes = n;
+        while (remainingNodes > 2) {
+            int sz = q.size();
+            remainingNodes -= sz;
+            while (sz--) {
+                int leaf = q.front();
+                q.pop();
+                for (int neighbor : adj[leaf]) {
+                    degree[neighbor]--;
+                    if (degree[neighbor] == 1) q.push(neighbor);
+                }
+            }
+        }
+
+        vector<int> centers;
+        while (!q.empty()) {
+            centers.push_back(q.front());
+            q.pop();
+        }
+        return centers;
+    };
+
+    // Lambda to count leaf pairs contributing to diameter
+    auto ndfs = [&](int node, int depth, int &ans, int &c, int level, int par, auto &&ndfs_ref) -> int {
+        if (level == depth) return 1;
+
+        int leaves = 0;
+        for (auto i : adj[node]) {
+            if (i == par) continue;
+            int nl = ndfs_ref(i, depth, ans, c, level + 1, node, ndfs_ref);
+            if (node == c) ans += nl * leaves;
+            leaves += nl;
+        }
+        return leaves;
+    };
+
+    int d = getDiameter();
+    auto centers = findTreeCenters();
+
+    if (centers.size() == 1) {
+        int c = centers[0];
+        int ans = 0;
+        ndfs(c, d / 2, ans, c, 0, -1, ndfs);
+        return ans;
+    }
+
+    queue<pii> q;
+    vector<int> vis(n, 0), dist(n, 0);
+
+    for (int i = 0; i < centers.size(); i++) {
+        q.push({centers[i], i + 1});
+        vis[centers[i]] = i + 1;
+    }
+
+    while (!q.empty()) {
+        auto [x, v] = q.front();
+        q.pop();
+        for (auto i : adj[x]) {
+            if (vis[i] != 0) continue;
+            dist[i] = dist[x] + 1;
+            vis[i] = v;
+            q.push({i, v});
+        }
+    }
+
+    int c1 = 0, c2 = 0;
+    for (int i = 0; i < n; i++) {
+        if (dist[i] == d / 2) {
+            if (vis[i] == 1) c1++;
+            else c2++;
+        }
+    }
+
+   return c1 * c2;
+}
