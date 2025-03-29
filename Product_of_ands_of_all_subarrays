@@ -1,0 +1,56 @@
+
+#include <bits/stdc++.h>
+#define int long long
+
+using namespace std;
+
+
+int32_t main()
+{
+    
+    int n;
+    cin>>n;
+    vector<int> v(n);
+    for(auto &i:v) cin>>i;
+    
+    
+    vector<vector<int>> nextZero(n+1,vector<int>(32,0));
+    
+    for(int i=n;i>=0;i--){
+        
+        for(int j=0;j<32;j++){
+            if(i==n||((v[i]&(1<<j))==0)) nextZero[i][j]=i;
+            else nextZero[i][j]=nextZero[i+1][j];
+        }
+    }
+    
+    int product=1;
+    for(int l=0;l<n;l++){
+        
+        int andval=v[l];
+        map<int,int> mp;
+        
+        for(int j=0;j<32;j++){
+            if(andval&(1<<j))
+            mp[nextZero[l][j]]^=(1<<j);
+        }
+        int currPos=l;
+        
+        for(auto i:mp){
+           product*= bin(andval,i.first-currPos);
+           currPos=i.first;
+           andval^=i.second;
+        }
+        
+        if(currPos<n) {
+            product=0;
+            break;
+        }
+        
+        
+    }
+    
+    cout<<product<<endl;
+    
+    
+}
