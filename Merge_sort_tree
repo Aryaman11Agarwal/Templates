@@ -1,0 +1,41 @@
+class MergeSortTree {
+private:
+    int n;
+    vector<vector<int>> tree;
+
+    void build(int index, int lo, int hi, vector<int> &arr) {
+        if (lo == hi) {
+            tree[index] = {arr[lo]};
+            return;
+        }
+
+        int mid = (lo + hi) / 2;
+        build(2 * index + 1, lo, mid, arr);
+        build(2 * index + 2, mid + 1, hi, arr);
+
+        tree[index].resize(hi - lo + 1);
+        merge(tree[2 * index + 1].begin(), tree[2 * index + 1].end(),
+              tree[2 * index + 2].begin(), tree[2 * index + 2].end(),
+              tree[index].begin());
+    }
+
+    int query(int index, int lo, int hi, int l, int r, int x) {
+        if (l > hi || lo > r) return 0;
+        if (l <= lo && hi <= r) {
+            return upper_bound(tree[index].begin(), tree[index].end(), x) - tree[index].begin();
+        }
+        int mid = (lo + hi) / 2;
+        return query(2 * index + 1, lo, mid, l, r, x) + query(2 * index + 2, mid + 1, hi, l, r, x);
+    }
+
+public:
+    MergeSortTree(vector<int> &arr) {
+        n = arr.size();
+        tree.resize(4 * n);
+        build(0, 0, n - 1, arr);
+    }
+
+    int query(int l, int r, int x) {
+        return query(0, 0, n - 1, l, r, x);
+    }
+};
